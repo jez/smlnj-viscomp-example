@@ -37,6 +37,9 @@ struct
       else (source, absyn, newStatenv)
     end
 
+  fun regionContainsCharpos (lo, hi) charpos =
+    lo <= charpos andalso charpos < hi
+
   fun ppdec (source, dec, staticEnv) =
     let
       val depth = 1000

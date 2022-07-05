@@ -9,18 +9,17 @@ struct
 
   fun usage () = String.concatWith "\n"
     [ "Usage:"
-    , "  "^(CommandLine.name ())^" [options] <filename> <line> <col>"
+    , "  "^(CommandLine.name ())^" [options] <filename> <charpos>"
     , ""
     , "Arguments:"
     , "  <filename>      The single SML file to run on."
-    , "  <line>          The line number the variable is on."
-    , "  <col>           Any column number the variable spans on that line."
+    , "  <charpos>       The 1-based character offset in the file to query."
     , ""
     , "Options:"
     , "  -h, --help      Show this usage message."
     , ""
     , "Example:"
-    , "  "^(CommandLine.name ())^" foo.sml 12 6"
+    , "  "^(CommandLine.name ())^" foo.sml 12"
     ]
 
   fun help () =
@@ -38,8 +37,7 @@ struct
 
   type options =
     { filename: string
-    , line: int
-    , col: int
+    , charpos: int
     }
 
   fun parseInt argName arg =
@@ -52,12 +50,10 @@ struct
       of [] => failWithUsage "Missing required <filename> argument."
        | "-h"::_ => help ()
        | "--help"::_ => help ()
-       | [filename] => failWithUsage "Missing required <line> argument."
-       | [filename, line] => failWithUsage "Missing required <col> argument."
-       | [filename, line, col] =>
+       | [filename] => failWithUsage "Missing required <charpos> argument."
+       | [filename, charpos] =>
            { filename=filename
-           , line=parseInt "line" line
-           , col=parseInt "col" col
+           , charpos=parseInt "charpos" charpos
            }
        | arg0::_ => failWithUsage "Too many arguments"
 
