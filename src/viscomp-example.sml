@@ -19,10 +19,8 @@ struct
       val ast = SmlFile.parse source
 
       (**
-       * This is probably very subtle and wrong.
-       * It looks like there's a lot of stateful operations going on in EnvRef.
-       * If attempting to get something larger working, I'd double check what
-       * environment to use when elaborating.
+       * This is wrong, as it doesn't even have the pervasives like print in
+       * scope. I'm not sure how to get that working.
        *)
       val {get=getLocEnv, set=_} = (EnvRef.loc ())
       val {get=getBaseEnv, set=_} = (EnvRef.base ())
@@ -36,9 +34,6 @@ struct
       then (source, Absyn.SEQdec nil, StaticEnv.empty)
       else (source, absyn, newStatenv)
     end
-
-  fun regionContainsCharpos (lo, hi) charpos =
-    lo <= charpos andalso charpos < hi
 
   fun ppdec (source, dec, staticEnv) =
     let

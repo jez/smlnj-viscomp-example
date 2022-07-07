@@ -9,7 +9,7 @@ Group is
 
   src/prelude.sml
 
-  src/var-at-charpos.sml
+  src/query-charpos.sml
   src/viscomp-example.sml
 
   src/options.sml

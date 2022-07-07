@@ -36,8 +36,8 @@ struct
     )
 
   type options =
-    { filename: string
-    , charpos: int
+    { fileName: string
+    , charPos: int
     }
 
   fun parseInt argName arg =
@@ -50,10 +50,10 @@ struct
       of [] => failWithUsage "Missing required <filename> argument."
        | "-h"::_ => help ()
        | "--help"::_ => help ()
-       | [filename] => failWithUsage "Missing required <charpos> argument."
-       | [filename, charpos] =>
-           { filename=filename
-           , charpos=parseInt "charpos" charpos
+       | [fileName] => failWithUsage "Missing required <charpos> argument."
+       | [fileName, charPos] =>
+           { fileName=fileName
+           , charPos=parseInt "charpos" charPos
            }
        | arg0::_ => failWithUsage "Too many arguments"
 
