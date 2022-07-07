@@ -49,7 +49,7 @@ val _ = fakePrint greeting
 
 ❯ .symbol-work/bin/smlnj-viscomp-example example.sml 30
 First query result:
-val signoff = "Goodbye, world!"
+val greeting = "Hello, world!"
 
 Type:
 ?.string
