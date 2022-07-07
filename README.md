@@ -13,16 +13,6 @@ If you have SML/NJ v110.99.2 installed, you can run this to build the project,
 (using my [symbol] build tool, which is just a shell script + Makefile that's
 checked into the repo):
 
-```bash
-# Build the executable into the .symbol-work/ folder
-./symbol make
-
-# Run the generated executable
-.symbol-work/bin/smlnj-viscomp-example example.sml 38
-```
-
-Some example output:
-
 ```
 ❯ ./symbol make
 [ .. ] Analyzing CM dependencies...
@@ -30,6 +20,9 @@ Some example output:
 [ .. ] Building 'smlnj-viscomp-example' into '.symbol-work/bin'...
 [ OK ] .symbol-work/bin/smlnj-viscomp-example
 ```
+
+Once that's done, here are some ways you can interact with it from the command
+line:
 
 ```
 ❯ .symbol-work/bin/smlnj-viscomp-example --help
