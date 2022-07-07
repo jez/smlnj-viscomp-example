@@ -3,9 +3,114 @@
 An example of how to use [SML/NJ]'s woefully under-documented [Visible Compiler]
 to build something that could possibly be used to build a language server.
 
-- TODO(jez) Document how to build and run
-  - TODO(jez) Make note in the docs that you're using v110.99.2 and that things
-    do break when upgrading.
+It's not finished by any means. Instead, it's meant to hint at an implementation
+or architecture that might interest you, as well as showcase APIs that (as of
+SML/NJ v110.99.2) were known to compile.
+
+## Demo
+
+If you have SML/NJ v110.99.2 installed, you can run this to build the project,
+(using my [symbol] build tool, which is just a shell script + Makefile that's
+checked into the repo):
+
+```bash
+# Build the executable into the .symbol-work/ folder
+./symbol make
+
+# Run the generated executable
+.symbol-work/bin/smlnj-viscomp-example example.sml 38
+```
+
+Some example output:
+
+```
+❯ ./symbol make
+[ .. ] Analyzing CM dependencies...
+[ .. ] Building heap image with SML/NJ...
+[ .. ] Building 'smlnj-viscomp-example' into '.symbol-work/bin'...
+[ OK ] .symbol-work/bin/smlnj-viscomp-example
+```
+
+```
+❯ .symbol-work/bin/smlnj-viscomp-example --help
+Shows the type of the expression variable at the location
+Usage:
+  .symbol-work/bin/smlnj-viscomp-example [options] <filename> <charpos>
+
+Arguments:
+  <filename>      The single SML file to run on.
+  <charpos>       The 1-based character offset in the file to query.
+
+Options:
+  -h, --help      Show this usage message.
+
+Example:
+  .symbol-work/bin/smlnj-viscomp-example foo.sml 12
+```
+
+```
+❯ cat example.sml
+fun fakePrint msg = ()
+val greeting = "Hello, world!"
+val _ = fakePrint greeting
+
+❯ .symbol-work/bin/smlnj-viscomp-example example.sml 30
+First query result:
+val signoff = "Goodbye, world!"
+
+Type:
+?.string
+
+❯ .symbol-work/bin/smlnj-viscomp-example example.sml 66
+First query result:
+fakePrint
+
+Type:
+'a -> ?.unit
+```
+
+## Explanation
+
+The SML/NJ wraps certain AST nodes in `MARK...` nodes, like `MARKdec`,
+`MARKexp`, etc. These nodes contain the nested AST node and also a `region`,
+which is a begin and end offset corresponding to locations in the source buffer.
+
+Given a character offset, we can walk the AST that SML/NJ produces and
+accumulate a list of matching AST nodes where the cursor position lies within
+the containing region. If we combine this with a pre-order traversal of the
+tree and push results onto the front of a list as we go, the resulting list will
+be ordered from most specific results to least specific results, so we can take
+the head of the list and find the type of it.
+
+The traversal is implemented (`Query.atPos`) but getting the type of an
+arbitrary result is mostly not, except for the case of a variable in a `val`
+binding, as a proof of concept.
+
+The idea would be that these two APIs (location-based queries and query results
+wrapping typed AST nodes) could be used to power IDE features like "show me the
+type" or "go to definition"
+
+## Gotchas / future work
+
+- This only works for a single file. To do multiple files, it would require
+  figuring out the APIs to use the Compilation Manager (CM) structures to load
+  and type check a file in the context of a number of files and libraries.
+
+- It currently prints out `?.` in front of all the types...
+
+  Honestly, I think this has to do with the next gotcha, which is:
+
+- It doesn't even typecheck a file in the context of the pervasive/basis
+  library. Again, it's likely that integrating with CM would fix this?
+
+The APIs **should** all be there, it's just not documented. When I was looking
+into this last, I basically grepped for `elabTop` in the SML/NJ sources, found
+one result in `base/compiler/TopLevel/main/compile.sml`, and was in the process
+of working my way out from there to see how it sets up the environment that gets
+fed into `elabTop`. Presumably all we have to do is mimic enough of that code
+that it would work (or maybe there's an even higher level API we could call that
+both takes care of setting up the right environment and gives us back an `Absyn`
+typed AST).
 
 ## Understanding the Visible Compiler APIs
 
@@ -63,3 +168,4 @@ SML/NJ checkout to begin browsing what APIs are available to you.
 
 [SML/NJ]: <https://www.smlnj.org/>
 [Visible Compiler]: <https://www.smlnj.org/doc/Compiler/pages/compiler.html>
+[symbol]: https://github.com/jez/symbol

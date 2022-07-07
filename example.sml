@@ -1,2 +1,3 @@
+fun fakePrint msg = ()
 val greeting = "Hello, world!"
-val signoff = "Goodbye, world!"
+val _ = fakePrint greeting
