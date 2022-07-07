@@ -3,9 +3,11 @@
 An example of how to use [SML/NJ]'s woefully under-documented [Visible Compiler]
 to build something that could possibly be used to build a language server.
 
-It's not finished by any means. Instead, it's meant to hint at an implementation
-or architecture that might interest you, as well as showcase APIs that (as of
-SML/NJ v110.99.2) were known to compile.
+It's not finished and I have no plans to do so. Instead, it's meant to hint at
+an implementation or architecture that might interest you, as well as showcase
+APIs that (as of SML/NJ v110.99.2) were known to compile. As in: it mostly just
+serves to jog my memory of what *can* be done, not be an example of how best to
+use these APIs.
 
 ## Demo
 
